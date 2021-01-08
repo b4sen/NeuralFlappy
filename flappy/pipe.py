@@ -3,11 +3,11 @@ import random
 
 class Pipe:
 
-    def __init__(self, surf):
+    def __init__(self, surf, left):
         self.surf = surf
         self.w = 50
         self.gap = 200
-        self.left = self.surf_w
+        self.left = left
         self.speed = 4
         self.top_y = self.pick_top()
         self.bot_y = self.top_y + self.gap
@@ -30,7 +30,7 @@ class Pipe:
     def move(self):
         self.left -= self.speed
         if self.left < -self.w:
-            self.__init__(self.surf)
+            self.__init__(self.surf, self.surf_w)
 
     def pick_top(self):
         return random.randint(20, self.surf_h - self.gap - 20)
