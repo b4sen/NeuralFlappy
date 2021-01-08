@@ -17,6 +17,6 @@ class FlappyNet(nn.Module):
         x = self.out(x)
         return torch.sigmoid(x)
 
-    def mutate(self, rate):
+    def mutate(self, rate=None):
         for param in self.parameters():
             param.data += torch.randn_like(param)

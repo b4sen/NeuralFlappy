@@ -48,8 +48,8 @@ class Bird:
     def mutate(self):
         # TODO: implement mutation
         # change a random weight by a random value? maybe sample from a distribution?
-        self.net.input.weight = torch.nn.parameter.Parameter(self.net.input.weight * 0.1)
-        self.net.hidden.weight = torch.nn.parameter.Parameter(self.net.input.weight * 0.1)
+        if random.random() < 0.1:
+            self.net.mutate()
 
     def jump(self):
         self.speed = self.lift

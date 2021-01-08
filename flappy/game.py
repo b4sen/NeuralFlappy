@@ -11,8 +11,9 @@ class Game:
         pg.init()
         self.screen = pg.display.set_mode((self.width, self.height))
         self.clock = pg.time.Clock()
-        self.hit = False
-        self.bird = Bird(self.screen)
+        self.birds = [Bird(self.screen) for i in range(100)]
+        self.dead_birds = []
+        # self.bird = Bird(self.screen)
         self.pipe_offset = [-200, 100, 400]
         self.pipes = [Pipe(self.screen, self.screen_w + i) for i in self.pipe_offset]
 
@@ -22,17 +23,22 @@ class Game:
 
     def draw(self):
         self.screen.fill((0, 0, 0))
-        self.bird.draw()
         for pipe in self.pipes:
             pipe.draw()
         if pg.key.get_pressed()[pg.K_SPACE]:
-            #self.bird.jump()
+            # self.bird.jump()
             pass
-        self.bird.update(self.pipes)
+        for bird in self.birds:
+            bird.draw()
+            bird.update(self.pipes)
+        # self.bird.update(self.pipes)
         for pipe in self.pipes:
             pipe.move()
-            if self.bird.is_collided(pipe):
-                self.hit = True
+            for bird in self.birds:
+                # check for collision
+                if bird.is_collided(pipe):
+                   self.dead_birds.append(bird)
+                   self.birds.remove(bird)
 
     def run(self):
         running = True
@@ -41,15 +47,15 @@ class Game:
                 if event.type == pg.QUIT:
                     sys.exit()
 
-            if not self.hit:
-                self.draw()
-            else:
+            self.draw()
+            if len(self.birds) == 0:
                 # TODO: don't reinit, but continue with a new generation
                 # maybe just reset the pipes?
                 for i in range(len(self.pipes)):
                     self.pipes[i].__init__(self.screen, self.screen_w + self.pipe_offset[i])
                 # self.__init__(self.width, self.height)
-                self.hit = False
+                # spawn new generation, simply init again for now
+                self.birds = [Bird(self.screen) for i in range(100)]
             pg.display.flip()
             self.clock.tick(60)
 
