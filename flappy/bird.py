@@ -8,7 +8,8 @@ class Bird:
         self.surf = surf
         self.h = self.surf.get_height() / 2
         self.w = self.surf.get_width() / 4
-        self.speed = 10
+        self.speed = 0
+        self.lift = -10
         self.gravity = 0.9
         self.net = FlappyNet()
 
@@ -25,13 +26,15 @@ class Bird:
         pipe = None
 
         surf_w, surf_h = self.screen_info
-        self.h += self.speed * self.gravity
+        self.speed += self.gravity
+        self.h += self.speed
         if self.h > surf_h:
             self.h = surf_h
+            self.speed = 0
 
         # determine closest pipe
         for i in range(len(pipes)):
-            d = pipes[i].left - self.bound_rect.right
+            d = (pipes[i].left + pipes[i].w) - self.bound_rect.right
             if d < distance and d > 0:
                 pipe = pipes[i]
                 distance = d
@@ -40,16 +43,21 @@ class Bird:
         # TODO: implement learning
         inp = torch.tensor([self.h, pipe.top_rect.left, pipe.top_rect.bottom, pipe.bot_rect.top]).float()
         if self.net(inp) > 0.5:
-            self.jump()
+            # self.jump()
+            pass
 
     def mutate(self):
+        # TODO: implement mutation
+        # change a random weight by a random value? maybe sample from a distribution?
         self.net.input.weight = torch.nn.parameter.Parameter(self.net.input.weight * 0.1)
         self.net.hidden.weight = torch.nn.parameter.Parameter(self.net.input.weight * 0.1)
 
     def jump(self):
-        self.h -= self.speed * 2
+        self.speed = self.lift
         if self.h < 0:
             self.h = 0
+            self.speed = 0
 
     def is_collided(self, pipe):
-        return bool(self.bound_rect.colliderect(pipe.top_rect)) or bool(self.bound_rect.colliderect(pipe.bot_rect))
+        hit = bool(self.bound_rect.colliderect(pipe.top_rect)) or bool(self.bound_rect.colliderect(pipe.bot_rect))
+        return hit
