@@ -41,10 +41,9 @@ class Bird:
 
         # create input tensor from bird position and narest pipe position
         # TODO: implement learning
-        inp = torch.tensor([self.h, pipe.top_rect.left, pipe.top_rect.bottom, pipe.bot_rect.top]).float()
+        inp = torch.tensor([self.h, self.speed, pipe.top_rect.left, pipe.top_rect.bottom, pipe.bot_rect.top]).float()
         if self.net(inp) > 0.5:
-            # self.jump()
-            pass
+            self.jump()
 
     def mutate(self):
         # TODO: implement mutation

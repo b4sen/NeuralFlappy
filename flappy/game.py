@@ -26,7 +26,8 @@ class Game:
         for pipe in self.pipes:
             pipe.draw()
         if pg.key.get_pressed()[pg.K_SPACE]:
-            self.bird.jump()
+            #self.bird.jump()
+            pass
         self.bird.update(self.pipes)
         for pipe in self.pipes:
             pipe.move()
