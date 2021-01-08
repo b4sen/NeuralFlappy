@@ -28,7 +28,7 @@ class Game:
             pipe.draw()
         if pg.key.get_pressed()[pg.K_SPACE]:
             self.bird.jump()
-        self.bird.update()
+        self.bird.update(self.pipes)
         for pipe in self.pipes:
             pipe.move()
             if self.bird.is_collided(pipe):
@@ -44,5 +44,7 @@ class Game:
             if not self.paused:
                 self.draw()
                 pg.display.flip()
+            else:
+                self.__init__(self.width, self.height)
             self.clock.tick(60)
 
