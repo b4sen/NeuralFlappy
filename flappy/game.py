@@ -5,10 +5,11 @@ import random
 
 from bird import Bird
 from pipe import Pipe
-
+import torch
 
 class Game:
 
+    # TODO: make it load the trained agent and let it play
     def __init__(self, w, h, num_agents=100):
         self.width = w
         self.height = h
@@ -30,12 +31,13 @@ class Game:
         self.screen.fill((0, 0, 0))
         for pipe in self.pipes:
             pipe.draw()
+        # this is very barbaric. TODO: make this better
         if pg.key.get_pressed()[pg.K_SPACE]:
             torch.save(self.birds[0].net.state_dict(), 'models/trained_agent.pth')
+        # update birds
         for bird in self.birds:
             bird.draw()
             bird.update(self.pipes)
-        # self.bird.update(self.pipes)
         for pipe in self.pipes:
             pipe.move()
             for bird in self.birds:
@@ -53,20 +55,16 @@ class Game:
 
             self.draw()
             if len(self.birds) == 0:
-                # TODO: don't reinit, but continue with a new generation
-                # maybe just reset the pipes?
+                # reset the pipes if all the birds are "dead"
                 for i in range(len(self.pipes)):
                     self.pipes[i].__init__(self.screen, self.screen_w + self.pipe_offset[i])
-                # self.__init__(self.width, self.height)
-                # spawn new generation, simply init again for now
-                # self.birds = [Bird(self.screen) for i in range(self.num_agents)]
+                # spawn new generation
                 self.init_generation()
             pg.display.flip()
             self.clock.tick(60)
 
     def init_generation(self):
         total_fitness = sum([bird.score for bird in self.dead_birds])
-        print(total_fitness)
         # set fitness of dead birds
         for bird in self.dead_birds:
             bird.fitness += bird.score / total_fitness
