@@ -1,17 +1,22 @@
 import pygame as pg
 import sys
+from copy import deepcopy
+import random
+
 from bird import Bird
 from pipe import Pipe
 
+
 class Game:
 
-    def __init__(self, w, h):
+    def __init__(self, w, h, num_agents=100):
         self.width = w
         self.height = h
         pg.init()
         self.screen = pg.display.set_mode((self.width, self.height))
         self.clock = pg.time.Clock()
-        self.birds = [Bird(self.screen) for i in range(100)]
+        self.num_agents = num_agents
+        self.birds = [Bird(self.screen) for i in range(self.num_agents)]
         self.dead_birds = []
         # self.bird = Bird(self.screen)
         self.pipe_offset = [-200, 100, 400]
@@ -55,7 +60,35 @@ class Game:
                     self.pipes[i].__init__(self.screen, self.screen_w + self.pipe_offset[i])
                 # self.__init__(self.width, self.height)
                 # spawn new generation, simply init again for now
-                self.birds = [Bird(self.screen) for i in range(100)]
+                # self.birds = [Bird(self.screen) for i in range(self.num_agents)]
+                self.init_generation()
             pg.display.flip()
             self.clock.tick(60)
+
+    def init_generation(self):
+        total_fitness = sum([bird.score for bird in self.dead_birds])
+        print(total_fitness)
+        # set fitness of dead birds
+        for bird in self.dead_birds:
+            bird.fitness += bird.score / total_fitness
+
+        # create populatein
+        self.birds = [self.pick_one() for i in range(self.num_agents)]
+
+        # clear out the dead birds
+        self.dead_birds = []
+
+    # using Dan Shiffman's algorithm
+    def pick_one(self):
+        idx = 0
+        r = random.random()
+        while r > 0:
+            r = r - self.dead_birds[idx].fitness
+            idx += 1
+        idx -= 1
+        bird = self.dead_birds[idx]
+        child = Bird(self.screen)
+        child.net = deepcopy(bird.net)
+        child.mutate(0.1)
+        return child
 

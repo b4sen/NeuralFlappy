@@ -12,6 +12,8 @@ class Bird:
         self.lift = -10
         self.gravity = 0.9
         self.net = FlappyNet()
+        self.score = 0
+        self.fitness = 0
 
     def draw(self):
         # store the bounding rectangle to detect collision later
@@ -45,11 +47,12 @@ class Bird:
         if self.net(inp) > 0.5:
             self.jump()
 
-    def mutate(self):
+        self.score += 1
+
+    def mutate(self, rate=0.1):
         # TODO: implement mutation
         # change a random weight by a random value? maybe sample from a distribution?
-        if random.random() < 0.1:
-            self.net.mutate()
+        self.net.mutate(rate)
 
     def jump(self):
         self.speed = self.lift

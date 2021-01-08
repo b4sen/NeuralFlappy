@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+import random
 
 class FlappyNet(nn.Module):
 
@@ -17,6 +17,8 @@ class FlappyNet(nn.Module):
         x = self.out(x)
         return torch.sigmoid(x)
 
-    def mutate(self, rate=None):
+    def mutate(self, rate):
         for param in self.parameters():
-            param.data += torch.randn_like(param)
+            for dat in param.data:
+                if random.random() < rate:
+                    dat += torch.randn_like(dat)
