@@ -31,8 +31,7 @@ class Game:
         for pipe in self.pipes:
             pipe.draw()
         if pg.key.get_pressed()[pg.K_SPACE]:
-            # self.bird.jump()
-            pass
+            torch.save(self.birds[0].net.state_dict(), 'models/trained_agent.pth')
         for bird in self.birds:
             bird.draw()
             bird.update(self.pipes)

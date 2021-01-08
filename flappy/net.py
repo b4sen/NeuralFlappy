@@ -20,5 +20,10 @@ class FlappyNet(nn.Module):
     def mutate(self, rate):
         for param in self.parameters():
             for dat in param.data:
-                if random.random() < rate:
-                    dat += torch.randn_like(dat)
+                if dat.ndim == 0:
+                    if random.random() < rate:
+                        dat += torch.randn_like(dat)
+                else:
+                    for num in dat:
+                        if random.random() < rate:
+                            num += torch.randn_like(num)
