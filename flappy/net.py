@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 class FlappyNet(nn.Module):
 
@@ -10,7 +11,7 @@ class FlappyNet(nn.Module):
         self.out = nn.Linear(hidden, 1)
 
     def forward(self, x):
-        x = self.input(x)
-        x = self.hidden(x)
+        x = F.relu(self.input(x))
+        x = F.relu(self.hidden(x))
         x = self.out(x)
         return torch.sigmoid(x)

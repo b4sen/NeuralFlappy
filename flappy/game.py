@@ -11,11 +11,10 @@ class Game:
         pg.init()
         self.screen = pg.display.set_mode((self.width, self.height))
         self.clock = pg.time.Clock()
-        self.paused = False
+        self.hit = False
         self.bird = Bird(self.screen)
-        self.pipes = [Pipe(self.screen, self.screen_w),
-                      Pipe(self.screen, self.screen_w + 300),
-                      Pipe(self.screen, self.screen_w + 600)]
+        self.pipe_offset = [-200, 100, 400]
+        self.pipes = [Pipe(self.screen, self.screen_w + i) for i in self.pipe_offset]
 
     @property
     def screen_w(self):
@@ -32,7 +31,7 @@ class Game:
         for pipe in self.pipes:
             pipe.move()
             if self.bird.is_collided(pipe):
-                self.paused = True
+                self.hit = True
 
     def run(self):
         running = True
@@ -41,10 +40,15 @@ class Game:
                 if event.type == pg.QUIT:
                     sys.exit()
 
-            if not self.paused:
+            if not self.hit:
                 self.draw()
-                pg.display.flip()
             else:
-                self.__init__(self.width, self.height)
+                # TODO: don't reinit, but continue with a new generation
+                # maybe just reset the pipes?
+                for i in range(len(self.pipes)):
+                    self.pipes[i].__init__(self.screen, self.screen_w + self.pipe_offset[i])
+                # self.__init__(self.width, self.height)
+                self.hit = False
+            pg.display.flip()
             self.clock.tick(60)
 

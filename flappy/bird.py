@@ -37,9 +37,14 @@ class Bird:
                 distance = d
 
         # create input tensor from bird position and narest pipe position
+        # TODO: implement learning
         inp = torch.tensor([self.h, pipe.top_rect.left, pipe.top_rect.bottom, pipe.bot_rect.top]).float()
         if self.net(inp) > 0.5:
             self.jump()
+
+    def mutate(self):
+        self.net.input.weight = torch.nn.parameter.Parameter(self.net.input.weight * 0.1)
+        self.net.hidden.weight = torch.nn.parameter.Parameter(self.net.input.weight * 0.1)
 
     def jump(self):
         self.h -= self.speed * 2
