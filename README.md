@@ -1,5 +1,5 @@
 # This is an AI playing flappy bird implemented in PyTorch
-
+![](./imgs/output.gif)
 ## TODO:
 
 - [ ] Add distance to top and bottom edge to the network -> 7 input nodes instead of 5?
