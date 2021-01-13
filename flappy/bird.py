@@ -36,7 +36,7 @@ class Bird:
 
         # determine closest pipe
         for i in range(len(pipes)):
-            d = (pipes[i].left + pipes[i].w) - self.bound_rect.right
+            d = (pipes[i].left + pipes[i].w) - self.bound_rect.left
             if d < distance and d > 0:
                 pipe = pipes[i]
                 distance = d
@@ -63,3 +63,4 @@ class Bird:
     def is_collided(self, pipe):
         hit = bool(self.bound_rect.colliderect(pipe.top_rect)) or bool(self.bound_rect.colliderect(pipe.bot_rect))
         return hit
+

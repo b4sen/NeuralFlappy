@@ -22,6 +22,8 @@ class Game:
         # self.bird = Bird(self.screen)
         self.pipe_offset = [-200, 100, 400]
         self.pipes = [Pipe(self.screen, self.screen_w + i) for i in self.pipe_offset]
+        self.font = pg.font.Font('freesansbold.ttf', 32)
+        self.num_gen = 1
 
     @property
     def screen_w(self):
@@ -42,7 +44,7 @@ class Game:
             pipe.move()
             for bird in self.birds:
                 # check for collision
-                if bird.is_collided(pipe):
+                if bird.is_collided(pipe) or bird.h >= self.height:
                    self.dead_birds.append(bird)
                    self.birds.remove(bird)
 
@@ -60,6 +62,11 @@ class Game:
                     self.pipes[i].__init__(self.screen, self.screen_w + self.pipe_offset[i])
                 # spawn new generation
                 self.init_generation()
+                self.num_gen += 1
+            num_agents = self.font.render('Num Agents: {}'.format(len(self.birds)), True, (0, 255, 0), None)
+            gen = self.font.render('Generation: {}'.format(self.num_gen), True, (0, 255, 0), None)
+            self.screen.blit(num_agents, (0, 0))
+            self.screen.blit(gen, (0, 40))
             pg.display.flip()
             self.clock.tick(60)
 
